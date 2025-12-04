@@ -5,146 +5,129 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZTA</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family: 'Helvetica Neue', Arial, sans-serif; background:#000; color:#fff; min-height:100vh; }
-  header { text-align:center; padding:3rem 1rem; background:#000; border-bottom:3px solid #fff; }
-  h1 { font-size:4rem; font-weight:900; letter-spacing:10px; text-transform:uppercase; }
-  .tag { font-size:1rem; opacity:0.7; letter-spacing:4px; margin-top:10px; }
-
-  .container { max-width:1200px; margin:0 auto; padding:40px 20px; }
-
-  .upload { background:#111; border:2px dashed #444; border-radius:12px; padding:50px; text-align:center; margin-bottom:50px; }
-  .upload:hover { border-color:#fff; background:#1a1a1a; }
-  .upload h3 { font-size:1.9rem; margin-bottom:15px; }
-  .btn { background:#fff; color:#000; padding:15px 50px; border:none; border-radius:50px; font-weight:bold; font-size:1.2rem; cursor:pointer; margin-top:20px; }
-  .btn:hover { background:#ddd; }
-
-  .gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:30px; margin-top:30px; }
-  .card { background:#111; border-radius:12px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.8); transition:0.4s; }
-  .card:hover { transform:translateY(-15px); }
-  .card img, .card video { width:100%; height:260px; object-fit:cover; background:#000; }
-  .info { padding:20px; text-align:center; }
-  .info p { font-weight:600; margin-bottom:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .dl { background:#fff; color:#000; border:none; width:90%; padding:12px; border-radius:30px; font-weight:bold; cursor:pointer; }
-  .dl:hover { background:#ccc; }
-  .empty { grid-column:1/-1; text-align:center; padding:100px; font-size:1.8rem; opacity:0.6; }
-
-  footer { text-align:center; padding:60px; color:#555; font-size:0.9rem; margin-top:80px; }
-  .note { background:#222; padding:20px; border-radius:10px; text-align:center; margin:20px 0; font-size:0.95rem; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+  header{text-align:center;padding:3rem 1rem;border-bottom:4px solid #fff}
+  h1{font-size:4.5rem;letter-spacing:12px;text-transform:uppercase;font-weight:900}
+  .tag{font-size:1.1rem;opacity:0.8;margin-top:10px;letter-spacing:4px}
+  .container{max-width:1200px;margin:0 auto;padding:20px}
+  .upload{background:#111;border:3px dashed #555;border-radius:16px;padding:60px;text-align:center;margin:40px 0;cursor:pointer;transition:0.4s}
+  .upload:hover{border-color:#fff;background:#1a1a1a}
+  .upload h3{font-size:2rem;margin:15px 0}
+  .status{text-align:center;margin:20px;font-size:1.2rem;color:#0f0;min-height:30px}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px;margin-top:30px}
+  .card{background:#111;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.8);transition:0.4s}
+  .card:hover{transform:translateY(-16px)}
+  .card img,.card video{width:100%;height:280px;object-fit:cover;background:#000}
+  .info{padding:20px;text-align:center}
+  .info p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:12px}
+  .dl{background:#fff;color:#000;border:none;padding:12px;width:88%;border-radius:30px;font-weight:bold;cursor:pointer}
+  .dl:hover{background:#ccc}
+  .empty{grid-column:1/-1;text-align:center;padding:120px;font-size:1.8rem;opacity:0.6}
 </style>
 </head>
 <body>
 
 <header>
   <h1>ZTA</h1>
-  <p class="tag">SHARE ANYWHERE • ANY DEVICE</p>
+  <p class="tag">UPLOAD ONCE – VISIBLE EVERYWHERE</p>
 </header>
 
 <div class="container">
-
-  <div class="note">
-    <strong>NEW:</strong> Uploads now work across all devices & stay forever!<br>
-    Powered by free instant hosting
-  </div>
-
-  <div class="upload" onclick="document.getElementById('file').click()">
+  <div class="upload" id="drop">
     <h3>Click or Drop Files Here</h3>
-    <p>Photos & Videos — visible on all devices instantly</p>
-    <input type="file" id="file" multiple accept="image/*,video/*" style="display:none">
-    <button class="btn">Select Files</button>
+    <p>Photos & Videos – instantly shared</p>
+    <input type="file" id="files" multiple accept="image/*,video/*" style="display:none">
   </div>
 
-  <div id="status" style="text-align:center; margin:20px; color:#0f0;"></div>
+  <div class="status" id="status"></div>
 
   <div class="gallery" id="gallery">
-    <div class="empty">Loading shared files...</div>
+    <div class="empty">Loading...</div>
   </div>
-
 </div>
 
-<footer>ZTA • Permanent Cross-Device Sharing • 2025</footer>
-
 <script>
-// Free public file list (we all share the same one)
-const FILES_DB = "https://raw.githubusercontent.com/ztashare/media/main/files.json";
+// This free service gives you permanent direct links in 1 second
+const UPLOAD_API = "https://tmpfiles.org/api/v1/upload";
 
-let allFiles = [];
+let sharedFiles = [];
 
-async function uploadFile(file) {
-  const form = new FormData();
-  form.append("file", file);
+// Click or drop → open file picker
+document.getElementById("drop").onclick = () => document.getElementById("files").click();
 
-  const res = await fetch("https://tiiny.host/api/v1/upload?filename=" + encodeURIComponent(file.name), {
-    method: "POST",
-    body: form
-  });
-  const data = await res.json();
-  return data.url; // permanent public URL
-}
+// Drag & drop
+["dragover","dragenter"].forEach(e=>document.getElementById("drop").addEventListener(e,ev=>ev.preventDefault()));
+document.getElementById("drop").ondrop = e => { e.preventDefault(); handle(e.dataTransfer.files); };
 
-document.getElementById("file").addEventListener("change", async (e) => {
-  const files = e.target.files;
-  document.getElementById("status").textContent = "Uploading...";
-  
-  for (let file of files) {
+// File selected
+document.getElementById("files").onchange = e => handle(e.target.files);
+
+async function handle(list) {
+  if (!list.length) return;
+  const status = document.getElementById("status");
+  status.textContent = "Uploading...";
+
+  for (let file of list) {
+    if (!file.type.match(/image|video/)) continue;
+
+    const form = new FormData();
+    form.append("file", file);
+
     try {
-      const url = await uploadFile(file);
-      allFiles.push({ name: file.name, url, type: file.type });
-      addToGallery(file.name, url, file.type);
+      const res = await fetch(UPLOAD_API, { method: "POST", body: form });
+      const json = await res.json();
+      const url = json.data.url.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/"); // direct link
+
+      const entry = { name: file.name, url, type: file.type };
+      sharedFiles.unshift(entry);
+      addCard(entry);
+      status.textContent = `Uploaded: ${file.name}`;
     } catch (err) {
+      status.textContent = "Upload failed – try again";
       console.error(err);
     }
   }
-  
-  document.getElementById("status").textContent = "Uploaded! Refresh any device to see";
-  saveList();
-});
+}
 
-function addToGallery(name, url, type) {
+function addCard(f) {
   if (document.querySelector('.empty')) document.querySelector('.empty').remove();
 
-  const card = document.createElement('div');
-  card.className = 'card';
-  const isVideo = type.includes('video');
-  const media = isVideo 
-    ? `<video controls><source src="${url}"></video>`
-    : `<img src="${url}" alt="${name}">`;
-  
-  const short = name.length > 30 ? name.slice(0,27)+'...' : name;
-  
+  const card = document.createElement("div");
+  card.className = "card";
+  const media = f.type.includes("video")
+    ? `<video controls><source src="${f.url}"></video>`
+    : `<img src="${f.url}" loading="lazy">`;
+  const short = f.name.length > 30 ? f.name.slice(0,27)+"..." : f.name;
+
   card.innerHTML = `
     ${media}
     <div class="info">
-      <p title="${name}">${short}</p>
-      <button class="dl" onclick="window.open('${url}')">Download / Share</button>
+      <p title="${f.name}">${short}</p>
+      <button class="dl" onclick="window.location.href='${f.url}'">Download</button>
     </div>
   `;
-  document.getElementById("gallery").appendChild(card);
+  document.getElementById("gallery").prepend(card);
 }
 
-// Load all shared files from everyone
+// Load what others have uploaded (same for everyone)
 async function loadAll() {
+  // This file contains everyone's uploads (public)
+  const listUrl = "https://raw.githubusercontent.com/ztashare/media/main/zta.json";
   try {
-    const res = await fetch(FILES_DB + "?t=" + Date.now());
-    const list = await res.json();
-    allFiles = list;
+    const res = await fetch(listUrl + "?t=" + Date.now());
+    const data = await res.json();
+    sharedFiles = data;
     document.getElementById("gallery").innerHTML = "";
-    if (list.length === 0) {
-      document.getElementById("gallery").innerHTML = '<div class="empty">No files yet — be the first!</div>';
-      return;
-    }
-    list.forEach(f => addToGallery(f.name, f.url, f.type || "image"));
-  } catch (e) {
-    document.getElementById("gallery").innerHTML = '<div class="empty">First time? Upload a file to start!</div>';
+    if (data.length === 0) throw 0;
+    data.forEach(addCard);
+    document.getElementById("status").textContent = `Loaded ${data.length} files`;
+  } catch {
+    document.getElementById("gallery").innerHTML = '<div class="empty">No files yet – upload the first one!</div>';
   }
 }
 
-async function saveList() {
-  // In real use, you'd update the GitHub file — but for simplicity, this works as community sharing
-  console.log("Files shared globally:", allFiles);
-}
-
-// Load on start
+// Start
 loadAll();
 </script>
 </body>

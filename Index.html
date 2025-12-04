@@ -1,156 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ShareHub - Fixed Version</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
-    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; color:#333; }
-    header { background:rgba(0,0,0,0.7); padding:1.5rem 0; text-align:center; position:fixed; width:100%; top:0; z-index:1000; backdrop-filter:blur(10px); }
-    h1 { color:white; font-size:2.5rem; font-weight:700; }
-    .container { max-width:1200px; margin:0 auto; padding:100px 20px 40px; }
-    .upload-section { background:white; padding:30px; border-radius:20px; box-shadow:0 15px 35px rgba(0,0,0,0.1); margin-bottom:40px; text-align:center; }
-    .upload-area { border:3px dashed #667eea; border-radius:15px; padding:50px; cursor:pointer; transition:0.3s; background:#f8f9ff; }
-    .upload-area:hover { background:#eef0ff; border-color:#764ba2; }
-    .upload-area.dragover { background:#e0e7ff; border-color:#5a67d8; transform:scale(1.02); }
-    .upload-icon { font-size:4rem; color:#667eea; margin-bottom:15px; }
-    input[type="file"] { display:none; }
-    .btn { background:#667eea; color:white; padding:12px 30px; border:none; border-radius:50px; cursor:pointer; margin-top:20px; font-size:1.1rem; transition:0.3s; }
-    .btn:hover { background:#5a67d8; transform:translateY(-3px); }
-    .gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:25px; margin-top:20px; }
-    .media-card { background:white; border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.15); transition:0.3s; }
-    .media-card:hover { transform:translateY(-10px); }
-    .media-card img, .media-card video { width:100%; height:250px; object-fit:cover; }
-    .media-info { padding:15px; text-align:center; }
-    .download-btn { background:#48bb78; color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer; transition:0.3s; }
-    .download-btn:hover { background:#38a169; }
-    .no-media { text-align:center; padding:80px; color:white; font-size:1.5rem; grid-column:1/-1; }
-    footer { text-align:center; padding:40px; color:white; margin-top:60px; }
-    @media (max-width:768px) { .gallery { grid-template-columns:1fr; } h1{font-size:2rem;} }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTA</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background:#0f0f0f; color:#eee;
+    min-height:100vh; line-height:1.6;
+  }
+  header {
+    text-align:center; padding:3rem 1rem; background:#000;
+    border-bottom:4px solid #fff;
+  }
+  h1 {
+    font-size:3.8rem; font-weight:900; letter-spacing:8px; color:#fff;
+    text-transform:uppercase;
+  }
+  .tagline { font-size:1.1rem; opacity:0.7; margin-top:10px; letter-spacing:3px; }
+
+  .container { max-width:1150px; margin:0 auto; padding:40px 20px; }
+
+  .upload {
+    background:#111; border:2px solid #333; border-radius:12px;
+    padding:50px; text-align:center; margin-bottom:50px;
+    transition:0.3s; cursor:pointer;
+  }
+  .upload:hover { border-color:#fff; background:#1a1a1a; }
+  .upload h3 { font-size:1.8rem; margin:15px 0; color:#fff; }
+  .upload p { opacity:0.7; }
+  input[type="file"] { display:none; }
+  .btn {
+    background:#fff; color:#000; border:none; padding:14px 44px;
+    border-radius:50px; font-weight:bold; margin-top:20px;
+    cursor:pointer; font-size:1.1rem; transition:0.3s;
+  }
+  .btn:hover { background:#ccc; transform:scale(1.05); }
+
+  .gallery {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
+    gap:30px;
+  }
+  .card {
+    background:#111; border-radius:12px; overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6); transition:0.4s;
+  }
+  .card:hover { transform:translateY(-15px); box-shadow:0 20px 50px rgba(0,0,0,0.8); }
+  .card img, .card video {
+    width:100%; height:240px; object-fit:cover; display:block;
+    background:#000;
+  }
+  .info {
+    padding:18px; text-align:center; background:#111;
+  }
+  .info p {
+    font-weight:600; margin-bottom:12px; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis; font-size:0.95rem;
+  }
+  .dl {
+    background:#fff; color:#000; border:none; width:85%; padding:11px;
+    border-radius:30px; font-weight:bold; cursor:pointer; transition:0.3s;
+  }
+  .dl:hover { background:#ddd; }
+
+  .empty {
+    grid-column:1/-1; text-align:center; padding:100px 20px;
+    font-size:1.6rem; opacity:0.6; color:#fff;
+  }
+
+  footer {
+    text-align:center; padding:50px; color:#777; font-size:0.9rem;
+    margin-top:80px; border-top:1px solid #333;
+  }
+  @media (max-width:680px) {
+    h1 { font-size:2.8rem; letter-spacing:4px; }
+    .gallery { grid-template-columns:1fr; }
+  }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>ShareHub</h1>
-    <p style="color:#ddd;margin-top:8px;">Upload → Everyone can see & download</p>
-  </header>
+<header>
+  <h1>ZTA</h1>
+  <p class="tagline">Upload • View • Download</p>
+</header>
 
-  <div class="container">
-    <div class="upload-section">
-      <h2 style="margin-bottom:15px;">Upload Photos & Videos</h2>
-      <div class="upload-area" id="uploadArea">
-        <div class="upload-icon">Upload</div>
-        <p><strong>Click or Drag & Drop</strong></p>
-        <p style="color:#888;margin-top:10px;">Images & Videos (will stay even after refresh)</p>
-        <input type="file" id="fileInput" multiple accept="image/*,video/*" />
-        <button class="btn" onclick="document.getElementById('fileInput').click()">Select Files</button>
-      </div>
-    </div>
+<div class="container">
 
-    <h2 style="color:white;text-align:center;margin:30px 0 20px;">Public Gallery</h2>
-    <div class="gallery" id="gallery">
-      <div class="no-media">No media yet — upload something!</div>
-    </div>
+  <div class="upload" id="dropZone">
+    <h3>Drop Files Here</h3>
+    <p>Photos & Videos — Click to select</p>
+    <input type="file" id="fileInput" multiple accept="image/*,video/*">
+    <button class="btn" onclick="document.getElementById('fileInput').click()">Select Files</button>
   </div>
 
-  <footer><p>© 2025 ShareHub • Works 100% in your browser</p></footer>
+  <div class="gallery" id="gallery">
+    <div class="empty">No files uploaded yet</div>
+  </div>
 
-  <script>
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('fileInput');
-    const gallery = document.getElementById('gallery');
+</div>
 
-    // Click to open file picker
-    uploadArea.addEventListener('click', () => fileInput.click());
+<footer>ZTA • Minimal Media Sharing • 2025</footer>
 
-    // Drag & drop visual feedback
-    ['dragenter', 'dragover'].forEach(e => uploadArea.addEventListener(e, ev => { ev.preventDefault(); uploadArea.classList.add('dragover'); }));
-    ['dragleave', 'drop'].forEach(e => uploadArea.addEventListener(e, ev => { ev.preventDefault(); uploadArea.classList.remove('dragover'); }));
+<script>
+  const zone = document.getElementById('dropZone');
+  const input = document.getElementById('fileInput');
+  const gallery = document.getElementById('gallery');
 
-    // Handle files
-    uploadArea.addEventListener('drop', handleFiles);
-    fileInput.addEventListener('change', handleFiles);
+  zone.onclick = () => input.click();
+  ['dragover','dragenter'].forEach(e => zone.addEventListener(e, ev => { ev.preventDefault(); zone.style.borderColor='#fff'; }));
+  ['dragleave','drop'].forEach(e => zone.addEventListener(e, ev => { ev.preventDefault(); zone.style.borderColor='#333'; }));
+  zone.ondrop = e => { e.preventDefault(); handle(e.dataTransfer.files); };
+  input.onchange = () => handle(input.files);
 
-    function handleFiles(e) {
-      let files = e.target.files || e.dataTransfer.files;
-      Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            const dataUrl = ev.target.result;
-            addToGallery(file.name, dataUrl, file.type);
-            saveToLocalStorage(); // Save every time we add something
-          };
-          reader.readAsDataURL(file);
-        }
+  function handle(files) {
+    [...files].forEach(file => {
+      if (!file.type.match('image.*|video.*')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        addCard(file.name, e.target.result, file.type);
+        save();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function addCard(name, src, type) {
+    if (gallery.querySelector('.empty')) gallery.innerHTML = '';
+    const card = document.createElement('div');
+    card.className = 'card';
+    const isVideo = type.includes('video');
+    const media = isVideo
+      ? `<video controls><source src="${src}" type="${type}"></video>`
+      : `<img src="${src}" alt="${name}">`;
+    const short = name.length > 28 ? name.slice(0, 25) + '...' : name;
+    card.innerHTML = `
+      ${media}
+      <div class="info">
+        <p title="${name}">${short}</p>
+        <button class="dl" onclick="download('${src}','${name}')">Download</button>
+      </div>
+    `;
+    gallery.appendChild(card);
+  }
+
+  function download(url, name) {
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+  }
+
+  function save() {
+    const items = [];
+    gallery.querySelectorAll('.card').forEach(c => {
+      const src = c.querySelector('img, source').src;
+      const name = c.querySelector('p').title || c.querySelector('p').textContent;
+      items.push({src, name});
+    });
+    localStorage.setItem('zta_media', JSON.stringify(items));
+  }
+
+  // Load saved media
+  window.onload = () => {
+    const saved = localStorage.getItem('zta_media');
+    if (saved) {
+      JSON.parse(saved).forEach(item => {
+        fetch(item.src)
+          .then(r => r.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onload = () => addCard(item.name, reader.result, blob.type);
+            reader.readAsDataURL(blob);
+          });
       });
-      fileInput.value = ''; // Reset input
     }
-
-    function addToGallery(filename, src, type) {
-      // Remove "no media" message
-      const noMedia = gallery.querySelector('.no-media');
-      if (noMedia) noMedia.remove();
-
-      const card = document.createElement('div');
-      card.className = 'media-card';
-
-      const media = type.startsWith('video/')
-        ? `<video controls><source src="${src}" type="${type}"></video>`
-        : `<img src="${src}" alt="${filename}">`;
-
-      const shortName = filename.length > 28 ? filename.substring(0,25)+'...' : filename;
-
-      card.innerHTML = `
-        ${media}
-        <div class="media-info">
-          <p><strong>${shortName}</strong></p>
-          <button class="download-btn" onclick="download('${src}', '${filename}')">Download</button>
-        </div>
-      `;
-      gallery.appendChild(card);
-    }
-
-    function download(dataUrl, filename) {
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = filename;
-      a.click();
-    }
-
-    // Save everything to localStorage
-    function saveToLocalStorage() {
-      const items = [];
-      gallery.querySelectorAll('.media-card').forEach(card => {
-        const isVideo = !!card.querySelector('video');
-        const src = isVideo ? card.querySelector('source').src : card.querySelector('img').src;
-        const nameElement = card.querySelector('strong');
-        const name = nameElement ? nameElement.textContent : 'unknown';
-        if (name.endsWith('...')) name = card.querySelector('p').textContent.replace('Download', '').trim();
-        items.push({ src, name: card.dataset.fullname || name, type: isVideo ? 'video' : 'image' });
-      });
-      localStorage.setItem('sharehub_media_2025', JSON.stringify(items));
-    }
-
-    // Load on page start
-    window.onload = function() {
-      const saved = localStorage.getItem('sharehub_media_2025');
-      if (saved) {
-        const items = JSON.parse(saved);
-        gallery.innerHTML = ''; // Clear default message
-        items.forEach(item => {
-          const fullName = item.name;
-          const shortName = fullName.length > 28 ? fullName.substring(0,25)+'...' : fullName;
-          addToGallery(fullName, item.src, item.type.startsWith('video') ? 'video/mp4' : 'image/jpeg');
-          // Store full name for correct download
-          const lastCard = gallery.lastElementChild;
-          lastCard.querySelector('.media-card').dataset.fullname = fullName;
-          lastCard.querySelector('strong').textContent = shortName;
-        });
-      }
-    };
-  </script>
+  };
+</script>
 </body>
 </html>

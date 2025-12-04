@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Galactic Share — Upload & View All Media</title>
+  <title>Galactic Share — Your Private & Public</title>
   <style>
     :root {
       --bg: #0f0f1e;
@@ -13,139 +13,70 @@
       --card: #1a1a2e;
       --glow: 0 0 20px rgba(123, 47, 255, 0.5);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Segoe UI', sans-serif;
       min-height: 100vh;
-      background-image: 
+      background-image:
         radial-gradient(circle at 10% 20%, rgba(123, 47, 255, 0.3) 0%, transparent 20%),
         radial-gradient(circle at 90% 80%, rgba(255, 107, 255, 0.3) 0%, transparent 20%);
     }
-
-    header {
-      text-align: center;
-      padding: 3rem 1rem 2rem;
-      background: linear-gradient(180deg, rgba(26,26,46,0.9), transparent);
-      backdrop-filter: blur(10px);
-    }
-
+    header { text-align: center; padding: 3rem 1rem 2rem; background: linear-gradient(180deg, rgba(26,26,46,0.9), transparent); backdrop-filter: blur(10px); }
     h1 {
       font-size: 4rem;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow: 0 0 30px rgba(123, 47, 255, 0.5);
-      margin-bottom: 0.5rem;
     }
-
-    p.tagline {
-      font-size: 1.3rem;
-      opacity: 0.8;
-    }
-
     .upload-zone {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: var(--card);
-      border-radius: 24px;
-      text-align: center;
-      box-shadow: var(--glow);
-      border: 2px dashed var(--accent);
-      transition: all 0.4s ease;
-      cursor: pointer;
+      max-width: 800px; margin: 2rem auto; padding: 2.5rem; background: var(--card);
+      border-radius: 24px; text-align: center; box-shadow: var(--glow);
+      border: 3px dashed var(--accent); transition: all 0.4s ease; cursor: pointer;
     }
-
-    .upload-zone:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 40px rgba(123, 47, 255, 0.4);
-      border-color: var(--accent2);
-    }
-
-    .upload-zone.dragover {
-      background: rgba(123, 47, 255, 0.15);
-      border-color: var(--accent2);
-      transform: scale(1.05);
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
+    .upload-zone:hover { transform: translateY(-10px); border-color: var(--accent2); }
+    .upload-zone.dragover { background: rgba(123, 47, 255, 0.2); transform: scale(1.05); }
     .btn-upload {
-      margin-top: 1rem;
-      padding: 14px 40px;
-      font-size: 1.2rem;
+      margin-top: 1rem; padding: 16px 50px; font-size: 1.3rem;
       background: linear-gradient(45deg, var(--accent), var(--accent2));
-      color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
+      color: white; border: none; border-radius: 50px; cursor: pointer;
       box-shadow: var(--glow);
-      transition: 0.3s;
     }
-
-    .btn-upload:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 30px rgba(123, 47, 255, 0.7);
-    }
-
     .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-      max-width: 1400px;
-      margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.8rem; padding: 2rem; max-width: 1600px; margin: 0 auto;
     }
-
     .media-card {
-      background: var(--card);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: var(--glow);
-      transition: all 0.4s ease;
-      position: relative;
-      aspect-ratio: 1 / 1;
+      background: var(--card); border-radius: 20px; overflow: hidden;
+      box-shadow: var(--glow); transition: all 0.4s ease; position: relative;
     }
-
     .media-card:hover {
-      transform: translateY(-15px) scale(1.03);
-      box-shadow: 0 25px 50px rgba(123, 47, 255, 0.6);
-      z-index: 10;
+      transform: translateY(-20px) scale(1.05);
+      box-shadow: 0 30px 60px rgba(123, 47, 255, 0.7); z-index: 10;
     }
-
     .media-card img, .media-card video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+      width: 100%; height: 380px; object-fit: cover; display: block;
     }
-
+    .download-btn {
+      position: absolute; bottom: 15px; right: 15px;
+      background: rgba(0,0,0,0.7); color: white; border: none;
+      width: 56px; height: 56px; border-radius: 50%; font-size: 1.8rem;
+      cursor: pointer; backdrop-filter: blur(10px); opacity: 0;
+      transition: all 0.3s ease; box-shadow: 0 0 20px rgba(123, 47, 255, 0.6);
+    }
+    .media-card:hover .download-btn { opacity: 1; transform: scale(1.15); }
     .raw-preview {
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent);
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px var(--accent);
+      height: 380px; background: linear-gradient(135deg, #000, #1a1a2e);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; color: var(--accent2); font-size: 2rem; font-weight: bold;
     }
-
-    footer {
-      text-align: center;
-      padding: 3rem;
-      opacity: 0.7;
-      font-size: 0.9rem;
-    }
-
+    footer { text-align: center; padding: 4rem 1rem; opacity: 0.8; }
     @media (max-width: 768px) {
       h1 { font-size: 2.8rem; }
-      .gallery { grid-template-columns: 1fr 1fr; padding: 1rem; }
+      .gallery { grid-template-columns: 1fr 1fr; }
+      .media-card img, .media-card video, .raw-preview { height: 280px; }
     }
   </style>
 </head>
@@ -153,97 +84,125 @@
 
   <header>
     <h1>Galactic Share</h1>
-    <p class="tagline">Drop your photos, videos, or RAW files — instantly visible to the universe</p>
+    <p style="font-size:1.5rem;margin-top:1rem;">Your Private Universe — Upload & Everyone Sees Instantly</p>
   </header>
 
   <div class="upload-zone" id="dropZone">
-    <h2>🚀 Drag & Drop Files Here</h2>
-    <p>Photos • Videos • RAW (.CR2, .NEF, .ARW, .DNG, etc.)</p>
-    <p>Or click to browse</p>
-    <button class="btn-upload" onclick="document.getElementById('fileInput').click()">Choose Files</button>
-    <input type="file" id="fileInput" multiple accept="image/*,video/*,.cr2,.nef,.arw,.dng,.raf,.orf" />
+    <h2>Drop Photos, Videos, RAW Files Here</h2>
+    <p>JPG • PNG • MP4 • CR2 • NEF • ARW • DNG • All files supported</p>
+    <p>Click to browse</p>
+    <button class="btn-upload">Choose Files</button>
+    <input type="file" id="fileInput" multiple />
   </div>
 
   <div class="gallery" id="gallery"></div>
 
   <footer>
-    Galactic Share • Pure HTML/CSS/JS Demo • All uploaded media is shown instantly (client-side only)
+    <p>Your own Galactic Share • Powered by your Firebase • Unlimited & Forever</p>
   </footer>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
   <script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
+    // YOUR PERSONAL FIREBASE CONFIG (100% safe to be public)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVdhf8P4UkG06M7ATfZ1Z0u1SCIYBVhQ4",
+      authDomain: "photos-27baa.firebaseapp.com",
+      projectId: "photos-27baa",
+      storageBucket: "photos-27baa.firebasestorage.app",
+      messagingSenderId: "655842685648",
+      appId: "1:655842685648:web:757014dfdd009c96d564d5",
+      measurementId: "G-SCXK58YL5Q"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+    const storageRef = storage.ref();
+
     const gallery = document.getElementById('gallery');
 
-    // Allow clicking the zone
-    dropZone.addEventListener('click', () => fileInput.click());
+    // Load all existing files when page opens
+    function loadAllMedia() {
+      storageRef.listAll().then(result => {
+        result.items.forEach(itemRef => {
+          itemRef.getDownloadURL().then(url => {
+            addMediaCard(url, itemRef.name);
+          });
+        });
+      }).catch(err => console.log(err));
+    }
 
-    // Drag & drop effects
-    ['dragenter', 'dragover'].forEach(event => {
-      dropZone.addEventListener(event, e => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      });
-    });
+    // Add media to gallery
+    function addMediaCard(url, filename) {
+      const div = document.createElement('div');
+      div.className = 'media-card';
 
-    ['dragleave', 'drop'].forEach(event => {
-      dropZone.addEventListener(event, e => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-      });
-    });
+      if (filename.match(/\.(jpg|jpeg|png|gif|webp|bmp|heic)$/i)) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = filename;
+        div.appendChild(img);
+      } else if (filename.match(/\.(mp4|webm|ogg|mov|avi)$/i)) {
+        const video = document.createElement('video');
+        video.src = url;
+        video.controls = true;
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = true;
+        div.appendChild(video);
+      } else {
+        div.className += ' raw-preview';
+        div.innerHTML = `<div>FILE<br><span style="font-size:1rem">${filename}</span></div>`;
+      }
 
-    // Handle dropped or selected files
-    dropZone.addEventListener('drop', handleFiles);
-    fileInput.addEventListener('change', () => handleFiles({ target: fileInput }));
+      // Download button
+      const btn = document.createElement('button');
+      btn.className = 'download-btn';
+      btn.innerHTML = 'Download';
+      btn.onclick = () => {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+      };
+      div.appendChild(btn);
 
-    function handleFiles(e) {
-      let files;
-      if (e.dataTransfer) files = e.dataTransfer.files;
-      else if (e.target.files) files = e.target.files;
+      gallery.prepend(div); // newest on top
+    }
 
+    // Upload handler
+    function uploadFiles(files) {
       Array.from(files).forEach(file => {
-        const reader = new FileReader();
-
-        reader.onload = function(event) {
-          const div = document.createElement('div');
-          div.className = 'media-card';
-
-          // Check if it's a video
-          if (file.type.startsWith('video/')) {
-            const video = document.createElement('video');
-            video.src = event.target.result;
-            video.controls = true;
-            video.autoplay = true;
-            video.muted = true;
-            video.loop = true;
-            div.appendChild(video);
-          }
-          // Check if it's an image
-          else if (file.type.startsWith('image/')) {
-            const img = document.createElement('img');
-            img.src = event.target.result;
-            img.alt = file.name;
-            div.appendChild(img);
-          }
-          // RAW files and others – show a cool placeholder
-          else {
-            div.className += ' raw-preview';
-            div.innerHTML = `
-              <div>
-                <p>RAW FILE</p>
-                <p style="font-size:1rem;opacity:0.8;">${file.name}</p>
-              </div>
-            `;
-          }
-
-          // Prepend so newest appears first
-          gallery.prepend(div);
-        };
-
-        reader.readAsDataURL(file);
+        const ref = storageRef.child(Date.now() + "_" + file.name);
+        ref.put(file).then(snapshot => {
+          snapshot.ref.getDownloadURL().then(url => {
+            addMediaCard(url, file.name);
+          });
+        }).catch(err => alert("Upload error: " + err.message));
       });
     }
+
+    // Drag & Drop + Click
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => {
+      dropZone.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); });
+    });
+
+    dropZone.addEventListener('drop', e => {
+      uploadFiles(e.dataTransfer.files);
+    });
+
+    document.getElementById('fileInput').addEventListener('change', e => {
+      if (e.target.files.length > 0) uploadFiles(e.target.files);
+    });
+
+    // Load everything on start
+    loadAllMedia();
   </script>
 </body>
 </html>

@@ -5,130 +5,177 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZTA</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#000;color:#fff;font-family:Arial,sans-serif;min-height:100vh}
-  header{text-align:center;padding:3rem 1rem;border-bottom:4px solid #fff}
-  h1{font-size:4.5rem;letter-spacing:12px;text-transform:uppercase;font-weight:900}
-  .tag{font-size:1.1rem;opacity:0.8;margin-top:10px;letter-spacing:4px}
-  .container{max-width:1200px;margin:0 auto;padding:20px}
-  .upload{background:#111;border:3px dashed #555;border-radius:16px;padding:60px;text-align:center;margin:40px 0;cursor:pointer;transition:0.4s}
-  .upload:hover{border-color:#fff;background:#1a1a1a}
-  .upload h3{font-size:2rem;margin:15px 0}
-  .status{text-align:center;margin:20px;font-size:1.2rem;color:#0f0;min-height:30px}
-  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px;margin-top:30px}
-  .card{background:#111;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.8);transition:0.4s}
-  .card:hover{transform:translateY(-16px)}
-  .card img,.card video{width:100%;height:280px;object-fit:cover;background:#000}
-  .info{padding:20px;text-align:center}
-  .info p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:12px}
-  .dl{background:#fff;color:#000;border:none;padding:12px;width:88%;border-radius:30px;font-weight:bold;cursor:pointer}
-  .dl:hover{background:#ccc}
-  .empty{grid-column:1/-1;text-align:center;padding:120px;font-size:1.8rem;opacity:0.6}
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background:#0f0f0f; color:#eee;
+    min-height:100vh; line-height:1.6;
+  }
+  header {
+    text-align:center; padding:3rem 1rem; background:#000;
+    border-bottom:4px solid #fff;
+  }
+  h1 {
+    font-size:3.8rem; font-weight:900; letter-spacing:8px; color:#fff;
+    text-transform:uppercase;
+  }
+  .tagline { font-size:1.1rem; opacity:0.7; margin-top:10px; letter-spacing:3px; }
+
+  .container { max-width:1150px; margin:0 auto; padding:40px 20px; }
+
+  .upload {
+    background:#111; border:2px solid #333; border-radius:12px;
+    padding:50px; text-align:center; margin-bottom:50px;
+    transition:0.3s; cursor:pointer;
+  }
+  .upload:hover { border-color:#fff; background:#1a1a1a; }
+  .upload h3 { font-size:1.8rem; margin:15px 0; color:#fff; }
+  .upload p { opacity:0.7; }
+  input[type="file"] { display:none; }
+  .btn {
+    background:#fff; color:#000; border:none; padding:14px 44px;
+    border-radius:50px; font-weight:bold; margin-top:20px;
+    cursor:pointer; font-size:1.1rem; transition:0.3s;
+  }
+  .btn:hover { background:#ccc; transform:scale(1.05); }
+
+  .gallery {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
+    gap:30px;
+  }
+  .card {
+    background:#111; border-radius:12px; overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6); transition:0.4s;
+  }
+  .card:hover { transform:translateY(-15px); box-shadow:0 20px 50px rgba(0,0,0,0.8); }
+  .card img, .card video {
+    width:100%; height:240px; object-fit:cover; display:block;
+    background:#000;
+  }
+  .info {
+    padding:18px; text-align:center; background:#111;
+  }
+  .info p {
+    font-weight:600; margin-bottom:12px; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis; font-size:0.95rem;
+  }
+  .dl {
+    background:#fff; color:#000; border:none; width:85%; padding:11px;
+    border-radius:30px; font-weight:bold; cursor:pointer; transition:0.3s;
+  }
+  .dl:hover { background:#ddd; }
+
+  .empty {
+    grid-column:1/-1; text-align:center; padding:100px 20px;
+    font-size:1.6rem; opacity:0.6; color:#fff;
+  }
+
+  footer {
+    text-align:center; padding:50px; color:#777; font-size:0.9rem;
+    margin-top:80px; border-top:1px solid #333;
+  }
+  @media (max-width:680px) {
+    h1 { font-size:2.8rem; letter-spacing:4px; }
+    .gallery { grid-template-columns:1fr; }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <h1>ZTA</h1>
-  <p class="tag">UPLOAD ONCE – VISIBLE EVERYWHERE</p>
+  <p class="tagline">Upload • View • Download</p>
 </header>
 
 <div class="container">
-  <div class="upload" id="drop">
-    <h3>Click or Drop Files Here</h3>
-    <p>Photos & Videos – instantly shared</p>
-    <input type="file" id="files" multiple accept="image/*,video/*" style="display:none">
-  </div>
 
-  <div class="status" id="status"></div>
+  <div class="upload" id="dropZone">
+    <h3>Drop Files Here</h3>
+    <p>Photos & Videos — Click to select</p>
+    <input type="file" id="fileInput" multiple accept="image/*,video/*">
+    <button class="btn" onclick="document.getElementById('fileInput').click()">Select Files</button>
+  </div>
 
   <div class="gallery" id="gallery">
-    <div class="empty">Loading...</div>
+    <div class="empty">No files uploaded yet</div>
   </div>
+
 </div>
 
+<footer>ZTA • Minimal Media Sharing • 2025</footer>
+
 <script>
-// This free service gives you permanent direct links in 1 second
-const UPLOAD_API = "https://tmpfiles.org/api/v1/upload";
+  const zone = document.getElementById('dropZone');
+  const input = document.getElementById('fileInput');
+  const gallery = document.getElementById('gallery');
 
-let sharedFiles = [];
+  zone.onclick = () => input.click();
+  ['dragover','dragenter'].forEach(e => zone.addEventListener(e, ev => { ev.preventDefault(); zone.style.borderColor='#fff'; }));
+  ['dragleave','drop'].forEach(e => zone.addEventListener(e, ev => { ev.preventDefault(); zone.style.borderColor='#333'; }));
+  zone.ondrop = e => { e.preventDefault(); handle(e.dataTransfer.files); };
+  input.onchange = () => handle(input.files);
 
-// Click or drop → open file picker
-document.getElementById("drop").onclick = () => document.getElementById("files").click();
+  function handle(files) {
+    [...files].forEach(file => {
+      if (!file.type.match('image.*|video.*')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        addCard(file.name, e.target.result, file.type);
+        save();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
-// Drag & drop
-["dragover","dragenter"].forEach(e=>document.getElementById("drop").addEventListener(e,ev=>ev.preventDefault()));
-document.getElementById("drop").ondrop = e => { e.preventDefault(); handle(e.dataTransfer.files); };
+  function addCard(name, src, type) {
+    if (gallery.querySelector('.empty')) gallery.innerHTML = '';
+    const card = document.createElement('div');
+    card.className = 'card';
+    const isVideo = type.includes('video');
+    const media = isVideo
+      ? `<video controls><source src="${src}" type="${type}"></video>`
+      : `<img src="${src}" alt="${name}">`;
+    const short = name.length > 28 ? name.slice(0, 25) + '...' : name;
+    card.innerHTML = `
+      ${media}
+      <div class="info">
+        <p title="${name}">${short}</p>
+        <button class="dl" onclick="download('${src}','${name}')">Download</button>
+      </div>
+    `;
+    gallery.appendChild(card);
+  }
 
-// File selected
-document.getElementById("files").onchange = e => handle(e.target.files);
+  function download(url, name) {
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+  }
 
-async function handle(list) {
-  if (!list.length) return;
-  const status = document.getElementById("status");
-  status.textContent = "Uploading...";
+  function save() {
+    const items = [];
+    gallery.querySelectorAll('.card').forEach(c => {
+      const src = c.querySelector('img, source').src;
+      const name = c.querySelector('p').title || c.querySelector('p').textContent;
+      items.push({src, name});
+    });
+    localStorage.setItem('zta_media', JSON.stringify(items));
+  }
 
-  for (let file of list) {
-    if (!file.type.match(/image|video/)) continue;
-
-    const form = new FormData();
-    form.append("file", file);
-
-    try {
-      const res = await fetch(UPLOAD_API, { method: "POST", body: form });
-      const json = await res.json();
-      const url = json.data.url.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/"); // direct link
-
-      const entry = { name: file.name, url, type: file.type };
-      sharedFiles.unshift(entry);
-      addCard(entry);
-      status.textContent = `Uploaded: ${file.name}`;
-    } catch (err) {
-      status.textContent = "Upload failed – try again";
-      console.error(err);
+  // Load saved media
+  window.onload = () => {
+    const saved = localStorage.getItem('zta_media');
+    if (saved) {
+      JSON.parse(saved).forEach(item => {
+        fetch(item.src)
+          .then(r => r.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onload = () => addCard(item.name, reader.result, blob.type);
+            reader.readAsDataURL(blob);
+          });
+      });
     }
-  }
-}
-
-function addCard(f) {
-  if (document.querySelector('.empty')) document.querySelector('.empty').remove();
-
-  const card = document.createElement("div");
-  card.className = "card";
-  const media = f.type.includes("video")
-    ? `<video controls><source src="${f.url}"></video>`
-    : `<img src="${f.url}" loading="lazy">`;
-  const short = f.name.length > 30 ? f.name.slice(0,27)+"..." : f.name;
-
-  card.innerHTML = `
-    ${media}
-    <div class="info">
-      <p title="${f.name}">${short}</p>
-      <button class="dl" onclick="window.location.href='${f.url}'">Download</button>
-    </div>
-  `;
-  document.getElementById("gallery").prepend(card);
-}
-
-// Load what others have uploaded (same for everyone)
-async function loadAll() {
-  // This file contains everyone's uploads (public)
-  const listUrl = "https://raw.githubusercontent.com/ztashare/media/main/zta.json";
-  try {
-    const res = await fetch(listUrl + "?t=" + Date.now());
-    const data = await res.json();
-    sharedFiles = data;
-    document.getElementById("gallery").innerHTML = "";
-    if (data.length === 0) throw 0;
-    data.forEach(addCard);
-    document.getElementById("status").textContent = `Loaded ${data.length} files`;
-  } catch {
-    document.getElementById("gallery").innerHTML = '<div class="empty">No files yet – upload the first one!</div>';
-  }
-}
-
-// Start
-loadAll();
+  };
 </script>
 </body>
 </html>
